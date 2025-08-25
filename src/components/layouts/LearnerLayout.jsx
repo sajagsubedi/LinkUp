@@ -1,8 +1,8 @@
 import { useUser } from "@clerk/clerk-react";
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
+import LearnerNavbar from "../common/LearnerNavbar";
 
 const LearnerLayout = () => {
   const { isSignedIn, user, isLoaded } = useUser();
@@ -26,7 +26,7 @@ const LearnerLayout = () => {
   }
   return (
     <>
-      <Navbar />
+      <LearnerNavbar />
       <Outlet />
       <Footer />
     </>
