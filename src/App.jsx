@@ -20,6 +20,7 @@ import {
   PublicLayout,
   ContributorLayout,
   LearnerLayout,
+  ProtectedRoute,
 } from "@/components/layouts";
 import { ThemeProvider } from "@/components/ui/theme-provider.jsx";
 
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
       { index: true, element: <LandingPage /> },
       {
         path: "/onboarding",
-        element: <Onboarding />,
+        element: (
+          <ProtectedRoute>
+            <Onboarding />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
