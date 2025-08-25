@@ -15,7 +15,7 @@ const Onboarding = () => {
         unsafeMetadata: { role },
       })
       .then(() => {
-        navigate(role === "recruiter" ? "/post-job" : "/jobs");
+        navigate("/dashboard");
       })
       .catch((err) => {
         console.error("Error updating user metadata:", err);
@@ -24,9 +24,7 @@ const Onboarding = () => {
 
   useEffect(() => {
     if (user?.unsafeMetadata?.role) {
-      navigate(
-        user?.unsafeMetadata?.role === "recruiter" ? "post-job" : "/jobs"
-      );
+      navigate("/dashboard");
     }
   }, [user]);
 
@@ -43,16 +41,16 @@ const Onboarding = () => {
         <Button
           variant="blue"
           className="h-26 text-2xl"
-          onClick={() => handleRoleSelection("candidate")}
+          onClick={() => handleRoleSelection("learner")}
         >
-          Candidate
+          Learner
         </Button>
         <Button
           variant="destructive"
           className="h-26 text-2xl"
-          onClick={() => handleRoleSelection("candidate")}
+          onClick={() => handleRoleSelection("contributor")}
         >
-          Recruiter
+          Contributor
         </Button>
       </div>
     </div>

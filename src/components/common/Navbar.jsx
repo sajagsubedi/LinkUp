@@ -67,15 +67,15 @@ export default function Header() {
         {/* Auth buttons */}
         <div className="md:w-[20%] flex items-center w-full justify-center pr-2 gap-2 mt-10 md:mt-0">
           <SignedOut>
-            <SignInButton mode="modal">
+            <SignInButton mode="modal" redirectUrl="/onboarding">
               <Button
                 variant="secondary"
-                className="rounded-sm bg-blue-500 hover:bg-blue-600"
+                className="rounded-sm bg-primary hover:bg-primary/90"
               >
                 Sign in
               </Button>
             </SignInButton>
-            <SignUpButton mode="modal">
+            <SignUpButton mode="modal" redirectUrl="/onboarding">
               <Button className="rounded-sm bg-primary hover:bg-primary/90">
                 Sign up
               </Button>
@@ -83,16 +83,14 @@ export default function Header() {
           </SignedOut>
         </div>
       </div>
+
       <div className="flex gap-2">
         <SignedIn>
-          {/* Recruiter special action */}
-          {user?.unsafeMetadata?.role === "recruiter" && (
-            <Link to="/post-job">
-              <Button variant="destructive" className="rounded-full">
-                Post a Job
-              </Button>
-            </Link>
-          )}
+          <Button>
+            <Link to="/dashboard">Dashboard</Link>
+          </Button>
+        </SignedIn>
+        <SignedIn>
           <UserButton
             appearance={{
               elements: {
