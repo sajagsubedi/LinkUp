@@ -13,6 +13,7 @@ import {
   ContributorClubsPage,
   ContributorInternshipPage,
   ContributorMentorsPage,
+  MentorshipPage,
 } from "@/pages";
 
 import {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { path: "events", element: <EventsPage /> },
       { path: "clubs", element: <ClubsPage /> },
       { path: "internship", element: <InternshipPage /> },
+      { path: "mentorship", element: <MentorshipPage /> },
     ],
   },
 

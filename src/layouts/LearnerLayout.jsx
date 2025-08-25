@@ -3,7 +3,7 @@ import LearnerNavbar from "../components/common/LearnerNavbar";
 
 const LearnerLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br flex flex-col">
       <LearnerNavbar />
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
         {children ? children : (
