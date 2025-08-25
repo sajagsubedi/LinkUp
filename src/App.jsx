@@ -15,7 +15,11 @@ import {
   ContributorMentorsPage,
 } from "@/pages";
 
-import { PublicLayout, ContributorLayout } from "@/components/layouts";
+import {
+  PublicLayout,
+  ContributorLayout,
+  LearnerLayout,
+} from "@/components/layouts";
 import { ThemeProvider } from "@/components/ui/theme-provider.jsx";
 
 const router = createBrowserRouter([
@@ -36,6 +40,7 @@ const router = createBrowserRouter([
   // Learner Dashboard
   {
     path: "/learner/dashboard",
+    element: <LearnerLayout />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "events", element: <EventsPage /> },
