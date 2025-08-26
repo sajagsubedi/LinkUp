@@ -168,7 +168,7 @@ const Internships = () => {
   };
 
   return (
-  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-910 to-blue-950">
       {/* Header section: Title and description */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-blue-100 mb-2">Find Internships</h1>

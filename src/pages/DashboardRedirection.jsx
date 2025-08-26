@@ -10,6 +10,8 @@ const DashboardRedirect = () => {
     return <Navigate to="/?sign-in=true" />;
   }
 
+
+  
   // Check onboarding status
   if (
     user !== undefined &&
