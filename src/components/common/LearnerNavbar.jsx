@@ -39,28 +39,7 @@ const LearnerNavbar = () => {
         <img src="/logo.png" className="h-9 w-auto" alt="logo" />
       </Link>
 
-      {/* Nav Links */}
-      {/* <div
-        className={`md:w-[85%] lg:w-[70%] md:flex justify-between md:py-1 md:h-full items-center md:static md:flex-row overflow-hidden md:overflow-visible md:px-3 fixed z-[99] flex-col h-[100vh] transition-all duration-500 w-0 ${
-          navActive ? "w-60" : ""
-        } top-0 right-0 bg-gray-800 md:bg-transparent shadow-gray-900 md:gap-4 gap-1 py-2`}
-      >
-        <ul className="md:w-[80%] flex flex-col justify-between md:flex-row gap-7 md:justify-center">
-          <div className="w-full flex justify-end md:hidden">
-            <button
-              className="text-2xl p-3 text-gray-400"
-              onClick={() => setNavActive(false)}
-            >
-              <X />
-            </button>
-          </div>
-          {navItems.map((item) => (
-            <NavLink key={item.name} href={item.href}>
-              {item.name}
-            </NavLink>
-          ))}
-        </ul>
-      </div> */}
+
 
             <div
               className={`md:w-[85%] lg:w-[70%] md:flex justify-between md:py-1 md:h-full items-center md:static md:flex-row overflow-hidden md:overflow-visible md:px-3 fixed z-[99] flex-col h-[100vh] transition-all duration-500 w-0 ${
