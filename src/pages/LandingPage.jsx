@@ -2,6 +2,7 @@ import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Briefcase, Users, BookOpen } from "lucide-react";
 import { useRef } from "react";
+import { SignedOut, SignIn } from "@clerk/clerk-react";
 
 const LandingPage = () => {
   const heroRef = useRef(null);
@@ -25,6 +26,8 @@ const LandingPage = () => {
               Connect with events, internships, clubs, and mentors that align
               with your goals and interests.
             </p>
+
+            <SignedOut>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="rounded-full px-8">
                 <Link to="/signup" className="flex items-center gap-2">
@@ -35,6 +38,7 @@ const LandingPage = () => {
                 <Link to="/login">Sign In</Link>
               </Button>
             </div>
+            </SignedOut>
           </div>
         </div>
       </section>
@@ -117,11 +121,15 @@ const LandingPage = () => {
             Join thousands of students who are discovering new opportunities
             every day.
           </p>
+          
+          <SignedOut>
+
           <Button size="lg" className="rounded-full px-8">
             <Link to="/signup" className="flex items-center gap-2">
               Create Your Account <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
+          </SignedOut>
         </div>
       </section>
     </div>
