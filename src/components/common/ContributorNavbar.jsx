@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { X, Menu } from "lucide-react";
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/clerk-react";
 
 const NavLink = ({ route, children }) => {
   const location = useLocation();
@@ -25,8 +25,6 @@ const NavLink = ({ route, children }) => {
 
 export default function ContrubutorNavbar({ navLinks }) {
   const [navActive, setNavActive] = useState(false);
-  const { user } = useUser();
-  console.log(user);
 
   return (
     <nav className="bg-background text-foreground flex items-center justify-between px-4 py-1 box-border gap-4 sticky top-0 h-16 z-[99] md:px-[5vw] w-full border-b border-border">

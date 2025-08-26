@@ -1,107 +1,20 @@
-import React, { useState } from "react";
-import { Calendar, MapPin, Users, Clock, Filter, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Calendar, MapPin, Users, Clock, Filter, Search, CheckCircle, UserPlus } from "lucide-react";
+import { useLearnerEvents } from "@/hooks/learner/useLearnerEvents";
+import { Button } from "@/components/ui/button";
 
 // EventsPage.jsx - Learner view for discovering events
-// Now uses design tokens and light theme
+// Now uses design tokens and light theme with real data from Supabase
 const Events = () => {
   // State for search input
   const [searchTerm, setSearchTerm] = useState("");
   // State for category filter
   const [categoryFilter, setCategoryFilter] = useState("all");
+  // State for user registrations
+  const [userRegistrations, setUserRegistrations] = useState(new Set());
 
-  // Mock data for events (replace with API data in production)
-  const mockEvents = [
-    {
-      id: "1",
-      title: "Tech Career Fair 2024",
-      description:
-        "Meet top tech companies and explore career opportunities in software development, data science, and more.",
-      date: "2024-01-15",
-      time: "10:00 AM - 4:00 PM",
-      location: "Convention Center, Downtown",
-      category: "Career",
-      organizer: "Tech Alliance",
-      attendees: 245,
-      maxAttendees: 500,
-      imageUrl:
-        "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: "2",
-      title: "AI Workshop for Beginners",
-      description:
-        "Learn the fundamentals of artificial intelligence and machine learning in this hands-on workshop.",
-      date: "2024-01-18",
-      time: "2:00 PM - 5:00 PM",
-      location: "University Campus, Building A",
-      category: "Workshop",
-      organizer: "AI Society",
-      attendees: 89,
-      maxAttendees: 120,
-      imageUrl:
-        "https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: "3",
-      title: "Study Abroad Information Session",
-      description:
-        "Get detailed information about study abroad programs, scholarships, and application processes.",
-      date: "2024-01-20",
-      time: "6:00 PM - 8:00 PM",
-      location: "Student Union Hall",
-      category: "Education",
-      organizer: "International Office",
-      attendees: 156,
-      maxAttendees: 200,
-      imageUrl:
-        "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: "4",
-      title: "Startup Pitch Competition",
-      description:
-        "Watch innovative startup ideas compete for funding and mentorship opportunities.",
-      date: "2024-01-22",
-      time: "1:00 PM - 6:00 PM",
-      location: "Business Incubator Center",
-      category: "Competition",
-      organizer: "Entrepreneurship Club",
-      attendees: 78,
-      maxAttendees: 150,
-      imageUrl:
-        "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: "5",
-      title: "Networking Mixer - Young Professionals",
-      description:
-        "Connect with young professionals across various industries and expand your network.",
-      date: "2024-01-25",
-      time: "7:00 PM - 10:00 PM",
-      location: "Downtown Hotel Ballroom",
-      category: "Networking",
-      organizer: "Young Professionals Network",
-      attendees: 203,
-      maxAttendees: 300,
-      imageUrl:
-        "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-    {
-      id: "6",
-      title: "Environmental Sustainability Summit",
-      description:
-        "Learn about climate change solutions and sustainable practices from industry experts.",
-      date: "2024-01-28",
-      time: "9:00 AM - 5:00 PM",
-      location: "Green Conference Center",
-      category: "Conference",
-      organizer: "Environmental Society",
-      attendees: 134,
-      maxAttendees: 250,
-      imageUrl:
-        "https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=500",
-    },
-  ];
+  // Use the learner events hook
+  const { events, loading, error, joinEvent, leaveEvent, isUserRegistered } = useLearnerEvents();
 
   // Available event categories for filtering
   const categories = [
@@ -114,8 +27,26 @@ const Events = () => {
     "Conference",
   ];
 
+  // Check user registrations for all events
+  useEffect(() => {
+    const checkRegistrations = async () => {
+      if (events.length > 0) {
+        const registrations = new Set();
+        for (const event of events) {
+          const isRegistered = await isUserRegistered(event.id);
+          if (isRegistered) {
+            registrations.add(event.id);
+          }
+        }
+        setUserRegistrations(registrations);
+      }
+    };
+
+    checkRegistrations();
+  }, [events, isUserRegistered]);
+
   // Filter events based on search and selected category
-  const filteredEvents = mockEvents.filter((event) => {
+  const filteredEvents = events.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -124,8 +55,58 @@ const Events = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Handle join/leave event
+  const handleEventAction = async (eventId) => {
+    const isRegistered = userRegistrations.has(eventId);
+    
+    if (isRegistered) {
+      const success = await leaveEvent(eventId);
+      if (success) {
+        setUserRegistrations(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(eventId);
+          return newSet;
+        });
+      }
+    } else {
+      const success = await joinEvent(eventId);
+      if (success) {
+        setUserRegistrations(prev => new Set([...prev, eventId]));
+      }
+    }
+  };
+
   // Category badge color using tokens
   const getCategoryColor = () => "bg-accent text-accent-foreground";
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
+        <div className="text-center py-12">
+          <Calendar className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-foreground mb-2">
+            Error loading events
+          </h3>
+          <p className="text-muted-foreground">
+            {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
@@ -176,71 +157,100 @@ const Events = () => {
       {/* Events Grid: Display filtered event cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {/* Render each event card */}
-        {filteredEvents.map((event) => (
-          <div
-            key={event.id}
-            className="bg-card border border-border rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2"
-          >
-            {/* Event image and category badge */}
-            <div className="relative h-40 sm:h-48">
-              <img
-                src={event.imageUrl}
-                alt={event.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-4 left-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(
-                    event.category
-                  )}`}
-                >
-                  {event.category}
-                </span>
+        {filteredEvents.map((event) => {
+          const isRegistered = userRegistrations.has(event.id);
+          const isFull = event.attendees >= event.max_attendees;
+          
+          return (
+            <div
+              key={event.id}
+              className="bg-card border border-border rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2"
+            >
+              {/* Event image and category badge */}
+              <div className="relative h-40 sm:h-48">
+                <img
+                  src={event.image_url || "/assets/placeholder.png"}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-4 left-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(
+                      event.category
+                    )}`}
+                  >
+                    {event.category}
+                  </span>
+                </div>
+                {isRegistered && (
+                  <div className="absolute top-4 right-4">
+                    <CheckCircle className="w-6 h-6 text-green-500 bg-white rounded-full" />
+                  </div>
+                )}
+              </div>
+
+              {/* Event details and actions */}
+              <div className="p-4 sm:p-6">
+                {/* Event title and description */}
+                <h3 className="text-xl font-bold text-foreground mb-2">
+                  {event.title}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                  {event.description}
+                </p>
+
+                {/* Event info rows: date, time, location, attendees */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {new Date(event.date).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4 mr-2" />
+                    {event.time}
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    {event.location}
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Users className="w-4 h-4 mr-2" />
+                    {event.attendees || 0}/{event.max_attendees} attendees
+                  </div>
+                </div>
+
+                {/* Organizer and Join/Leave button */}
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-foreground/70">
+                    by {event.organizer || "Unknown"}
+                  </div>
+                  <Button
+                    onClick={() => handleEventAction(event.id)}
+                    disabled={isFull && !isRegistered}
+                    variant={isRegistered ? "outline" : "default"}
+                    className={`flex items-center gap-2 ${
+                      isRegistered 
+                        ? "border-green-500 text-green-600 hover:bg-green-50" 
+                        : ""
+                    }`}
+                  >
+                    {isRegistered ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Joined
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        {isFull ? "Full" : "Join"}
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-
-            {/* Event details and actions */}
-            <div className="p-4 sm:p-6">
-              {/* Event title and description */}
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                {event.title}
-              </h3>
-              <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                {event.description}
-              </p>
-
-              {/* Event info rows: date, time, location, attendees */}
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {event.date}
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2" />
-                  {event.time}
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {event.location}
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Users className="w-4 h-4 mr-2" />
-                  {event.attendees}/{event.maxAttendees} attendees
-                </div>
-              </div>
-
-              {/* Organizer and Join button */}
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-foreground/70">
-                  by {event.organizer}
-                </div>
-                <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
-                  Join
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* No events found message */}

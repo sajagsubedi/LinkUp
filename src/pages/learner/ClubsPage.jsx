@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Building, Search, Filter, Users } from 'lucide-react';
 
 const Clubs = () => {
@@ -15,7 +15,8 @@ const Clubs = () => {
       category: 'Technology',
       members: 248,
       benefits: ['Networking opportunities', 'Industry connections', 'Skill development', 'Leadership roles'],
-      imageUrl: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: false
     },
     {
       id: '2',
@@ -25,7 +26,8 @@ const Clubs = () => {
       members: 89,
       requirements: ['Interest in public speaking', 'Commitment to improvement', 'Respectful communication'],
       benefits: ['Improved communication', 'Critical thinking', 'Confidence building', 'Competition opportunities'],
-      imageUrl: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: true
     },
     {
       id: '3',
@@ -35,7 +37,8 @@ const Clubs = () => {
       members: 156,
       requirements: ['Passion for environment', 'Willingness to participate in activities', 'Collaborative mindset'],
       benefits: ['Environmental impact', 'Community service', 'Leadership opportunities', 'Networking'],
-      imageUrl: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: false
     },
     {
       id: '4',
@@ -45,7 +48,8 @@ const Clubs = () => {
       members: 201,
       requirements: ['Open to all students', 'Cultural appreciation', 'Inclusive mindset'],
       benefits: ['Cultural exchange', 'Social connections', 'Academic support', 'Event planning experience'],
-      imageUrl: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: false
     },
     {
       id: '5',
@@ -55,7 +59,8 @@ const Clubs = () => {
       members: 67,
       requirements: ['Interest in photography', 'Camera (smartphone OK)', 'Creative enthusiasm'],
       benefits: ['Skill development', 'Portfolio building', 'Equipment access', 'Exhibition opportunities'],
-      imageUrl: 'https://images.pexels.com/photos/606541/pexels-photo-606541.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/606541/pexels-photo-606541.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: false
     },
     {
       id: '6',
@@ -65,21 +70,38 @@ const Clubs = () => {
       members: 134,
       requirements: ['Business interest', 'Innovative thinking', 'Collaborative spirit'],
       benefits: ['Mentorship access', 'Funding opportunities', 'Network building', 'Business skills'],
-      imageUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=500'
+      imageUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=500',
+      isJoined: false
     }
   ];
 
   // List of club categories for filtering
   const categories = ['all', 'Technology', 'Academic', 'Environment', 'Cultural', 'Arts', 'Business', 'Sports', 'Music'];
 
+  // Local state to manage clubs (join/unjoin, counts)
+  const [clubs, setClubs] = useState(mockClubs);
+
   // Filter clubs by search term and selected category
-  const filteredClubs = mockClubs.filter(club => {
+  const filteredClubs = useMemo(() => clubs.filter(club => {
     const matchesSearch = club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          club.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || club.category === categoryFilter;
     return matchesSearch && matchesCategory;
-  });
+  }), [clubs, searchTerm, categoryFilter]);
+
+  // Toggle join/leave club and update members count
+  const onToggleJoin = (id) => {
+    setClubs(prev => prev.map(c => {
+      if (c.id !== id) return c;
+      const willJoin = !c.isJoined;
+      return {
+        ...c,
+        isJoined: willJoin,
+        members: Math.max(0, c.members + (willJoin ? 1 : -1))
+      };
+    }));
+  };
 
   // Returns emoji icon for each club category
   const getCategoryIcon = (category) => {
@@ -97,7 +119,7 @@ const Clubs = () => {
   };
 
   return (
-  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8">
       {/* Header section: Title and description */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Discover Clubs</h1>
@@ -188,8 +210,15 @@ const Clubs = () => {
 
               {/* Action buttons: Join and Learn More */}
               <div className="flex space-x-2">
-                <button className="flex-1 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90 transition-colors">
-                  Join Club
+                <button
+                  onClick={() => onToggleJoin(club.id)}
+                  className={`flex-1 py-2 rounded-lg transition-colors border ${
+                    club.isJoined
+                      ? 'border-border text-foreground hover:bg-accent'
+                      : 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
+                  }`}
+                >
+                  {club.isJoined ? 'Joined' : 'Join Club'}
                 </button>
                 <button className="flex-1 border border-border text-foreground py-2 rounded-lg hover:bg-accent transition-colors">
                   Learn More
