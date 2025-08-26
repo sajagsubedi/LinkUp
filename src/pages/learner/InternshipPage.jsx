@@ -168,7 +168,7 @@ const Internships = () => {
   };
 
   return (
-    <div className="min-h-[80vh] w-full px-45 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
       {/* Header section: Title and description */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-blue-100 mb-2">Find Internships</h1>
@@ -176,8 +176,8 @@ const Internships = () => {
       </div>
 
       {/* Search and Filters section */}
-      <div className="bg-blue-950 rounded-xl shadow-lg p-6 mb-8">
-        <div className="grid md:grid-cols-3 gap-4">
+      <div className="bg-blue-950 rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search input for internship title, company, or description */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
@@ -225,12 +225,12 @@ const Internships = () => {
       </div>
 
       {/* Internships List: Display filtered internship cards */}
-      <div className="space-y-6">
+  <div className="space-y-4 sm:space-y-6">
         {/* Render each internship card */}
         {filteredInternships.map((internship) => {
           const daysRemaining = getDaysRemaining(internship.deadline);
           return (
-            <div key={internship.id} className="bg-blue-950 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all">
+            <div key={internship.id} className="bg-blue-950 rounded-xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition-all">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                 <div className="flex-1">
                   {/* Internship card header: title, company, location, type, deadline */}

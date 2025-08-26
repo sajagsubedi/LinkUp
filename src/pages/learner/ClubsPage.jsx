@@ -112,7 +112,7 @@ const Clubs = () => {
   };
 
   return (
-    <div className="min-h-[80vh] w-full px-45 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
       {/* Header section: Title and description */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-blue-100 mb-2">Discover Clubs</h1>
@@ -120,8 +120,8 @@ const Clubs = () => {
       </div>
 
       {/* Search and Filters section */}
-      <div className="bg-blue-950 rounded-xl shadow-lg p-6 mb-8">
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="bg-blue-950 rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search input for club name, description, or category */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
@@ -153,11 +153,11 @@ const Clubs = () => {
       </div>
 
       {/* Clubs Grid: Display filtered club cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {filteredClubs.map((club) => (
           <div key={club.id} className="bg-blue-950 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2">
             {/* Club image and category/members overlays */}
-            <div className="relative h-48">
+            <div className="relative h-40 sm:h-48">
               <img 
                 src={club.imageUrl} 
                 alt={club.name}
@@ -179,7 +179,7 @@ const Clubs = () => {
             </div>
 
             {/* Club details and actions */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Club name and description */}
               <h3 className="text-xl font-bold text-blue-100 mb-2">{club.name}</h3>
               <p className="text-blue-300 text-sm mb-4 line-clamp-3">{club.description}</p>

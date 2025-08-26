@@ -127,7 +127,7 @@ const Mentors = () => {
   };
 
   return (
-    <div className="min-h-[80vh] w-full px-45 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
       {/* Header section: Title and description */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-blue-100 mb-2">Find Your Mentor</h1>
@@ -135,8 +135,8 @@ const Mentors = () => {
       </div>
 
       {/* Search and Filters section */}
-      <div className="bg-blue-950 rounded-xl shadow-lg p-6 mb-8">
-        <div className="grid md:grid-cols-3 gap-4">
+      <div className="bg-blue-950 rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search input for mentor name, title, or expertise */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
@@ -184,7 +184,7 @@ const Mentors = () => {
       </div>
 
       {/* Mentors Grid: Display filtered mentor cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {filteredMentors.map((mentor) => (
           <div key={mentor.id} className="bg-blue-950 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2">
             {/* Mentor image and badges */}
@@ -192,7 +192,7 @@ const Mentors = () => {
               <img 
                 src={mentor.imageUrl} 
                 alt={mentor.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-40 sm:h-48 object-cover"
               />
               {/* Availability badge */}
               <div className="absolute top-4 left-4">
@@ -210,7 +210,7 @@ const Mentors = () => {
             </div>
 
             {/* Mentor details and actions */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Mentor name, title, company, experience, reviews */}
               <div className="flex items-start justify-between mb-3">
                 <div>
