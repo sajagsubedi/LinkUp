@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building, Search, Filter, Users, MapPin, Calendar, Award } from 'lucide-react';
+import { Building, Search, Filter, Users } from 'lucide-react';
 
 const Clubs = () => {
   // State for search input and category filter
@@ -81,21 +81,6 @@ const Clubs = () => {
     return matchesSearch && matchesCategory;
   });
 
-  // Returns Tailwind color classes for each category (not used in dark theme, but kept for reference)
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Technology': 'bg-blue-100 text-blue-600',
-      'Academic': 'bg-purple-100 text-purple-600',
-      'Environment': 'bg-green-100 text-green-600',
-      'Cultural': 'bg-yellow-100 text-yellow-600',
-      'Arts': 'bg-pink-100 text-pink-600',
-      'Business': 'bg-indigo-100 text-indigo-600',
-      'Sports': 'bg-red-100 text-red-600',
-      'Music': 'bg-orange-100 text-orange-600'
-    };
-    return colors[category] || 'bg-gray-100 text-gray-600';
-  };
-
   // Returns emoji icon for each club category
   const getCategoryIcon = (category) => {
     const icons = {
@@ -112,35 +97,35 @@ const Clubs = () => {
   };
 
   return (
-  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-910 to-blue-950">
+  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-gradient-to-br from-blue-900 to-blue-950">
       {/* Header section: Title and description */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-blue-100 mb-2">Discover Clubs</h1>
-        <p className="text-blue-300">Find clubs and organizations that match your interests and connect with like-minded students</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Discover Clubs</h1>
+        <p className="text-muted-foreground">Find clubs and organizations that match your interests and connect with like-minded students</p>
       </div>
 
       {/* Search and Filters section */}
-      <div className="bg-blue-950 rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+      <div className="bg-card rounded-xl border border-border shadow-lg p-4 sm:p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search input for club name, description, or category */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <input
               type="text"
               placeholder="Search clubs by name, description, or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-blue-800 bg-blue-900 text-blue-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-input bg-muted text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Category Filter dropdown */}
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 h-5" />
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-blue-800 bg-blue-900 text-blue-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-input bg-muted text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {categories.map(category => (
                 <option key={category} value={category}>
@@ -153,9 +138,9 @@ const Clubs = () => {
       </div>
 
       {/* Clubs Grid: Display filtered club cards */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {filteredClubs.map((club) => (
-          <div key={club.id} className="bg-blue-950 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2">
+          <div key={club.id} className="bg-card border border-border rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2">
             {/* Club image and category/members overlays */}
             <div className="relative h-40 sm:h-48">
               <img 
@@ -165,13 +150,13 @@ const Clubs = () => {
               />
               {/* Category badge */}
               <div className="absolute top-4 left-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium bg-blue-900 text-blue-100 shadow-md`}>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium bg-accent text-accent-foreground border border-border`}>
                   {getCategoryIcon(club.category)} {club.category}
                 </span>
               </div>
               {/* Members count badge */}
-              <div className="absolute top-4 right-4 bg-blue-900 rounded-lg p-2 shadow-md">
-                <div className="flex items-center text-sm text-blue-100">
+              <div className="absolute top-4 right-4 bg-muted rounded-lg p-2 shadow-md border border-border">
+                <div className="flex items-center text-sm text-foreground">
                   <Users className="w-4 h-4 mr-1" />
                   {club.members}
                 </div>
@@ -181,20 +166,20 @@ const Clubs = () => {
             {/* Club details and actions */}
             <div className="p-4 sm:p-6">
               {/* Club name and description */}
-              <h3 className="text-xl font-bold text-blue-100 mb-2">{club.name}</h3>
-              <p className="text-blue-300 text-sm mb-4 line-clamp-3">{club.description}</p>
+              <h3 className="text-xl font-bold text-foreground mb-2">{club.name}</h3>
+              <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{club.description}</p>
 
-
+              {/* Key Benefits */}
               <div className="mb-4">
-                <h4 className="text-sm font-semibold text-blue-100 mb-2">Key Benefits:</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Key Benefits:</h4>
                 <div className="flex flex-wrap gap-1">
-                  {club.benefits.slice(0, 2).map((benefit, index) => (
-                    <span key={index} className="bg-blue-900 text-blue-100 px-2 py-1 rounded-full text-xs">
+                  {club.benefits?.slice(0, 2).map((benefit, index) => (
+                    <span key={index} className="bg-muted text-foreground px-2 py-1 rounded-full text-xs border border-border">
                       {benefit}
                     </span>
                   ))}
-                  {club.benefits.length > 2 && (
-                    <span className="bg-blue-800 text-blue-200 px-2 py-1 rounded-full text-xs">
+                  {club.benefits && club.benefits.length > 2 && (
+                    <span className="bg-muted text-foreground px-2 py-1 rounded-full text-xs border border-border">
                       +{club.benefits.length - 2} more
                     </span>
                   )}
@@ -203,10 +188,10 @@ const Clubs = () => {
 
               {/* Action buttons: Join and Learn More */}
               <div className="flex space-x-2">
-                <button className="flex-1 bg-cyan-600 text-white py-2 rounded-lg hover:bg-cyan-400 transition-colors">
+                <button className="flex-1 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90 transition-colors">
                   Join Club
                 </button>
-                <button className="flex-1 border border-cyan-600 text-cyan-600 py-2 rounded-lg hover:bg-cyan-500 hover:text-cyan-50 transition-colors">
+                <button className="flex-1 border border-border text-foreground py-2 rounded-lg hover:bg-accent transition-colors">
                   Learn More
                 </button>
               </div>
@@ -218,9 +203,9 @@ const Clubs = () => {
       {/* No clubs found message */}
       {filteredClubs.length === 0 && (
         <div className="text-center py-12">
-          <Building className="w-16 h-16 text-blue-900 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-blue-100 mb-2">No clubs found</h3>
-          <p className="text-blue-300">Try adjusting your search or filters to discover more clubs.</p>
+          <Building className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-foreground mb-2">No clubs found</h3>
+          <p className="text-muted-foreground">Try adjusting your search or filters to discover more clubs.</p>
         </div>
       )}
     </div>
