@@ -2,14 +2,14 @@ import { useUser } from "@clerk/clerk-react";
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Footer from "@/components/common/Footer";
-import ContrubutorNavbar from "../common/ContributorNavbar";
+import ContributorNavbar from "../common/ContributorNavbar";
 
 const navLinks = [
   {
     name: "Dashboard",
     purposes: [
       "post-events",
-      "post-mentorship",
+      "provide-mentorship",
       "post-internship",
       "post-club",
     ],
@@ -29,6 +29,11 @@ const navLinks = [
     name: "Clubs",
     purposes: ["post-club"],
     path: "clubs",
+  },
+  {
+    name: "Mentorship",
+    purposes: ["provide-mentorship"],
+    path: "mentorship",
   },
 ];
 
@@ -73,7 +78,7 @@ const ContributorLayout = () => {
 
   return (
     <>
-      <ContrubutorNavbar navLinks={filteredNavLinks} />
+      <ContributorNavbar navLinks={filteredNavLinks} />
       <Outlet />
       <Footer />
     </>
