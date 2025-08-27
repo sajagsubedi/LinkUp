@@ -39,10 +39,8 @@ const InternshipModal = ({
     stipend: "",
     requirements: "",
     deadline: new Date(),
-    image: null,
   });
 
-  const [imagePreview, setImagePreview] = useState("");
   const [date, setDate] = useState(new Date());
 
   // Initialize form with internship data if editing
@@ -56,31 +54,18 @@ const InternshipModal = ({
         type: internship.type || "remote",
         duration: internship.duration || "",
         stipend: internship.stipend || "",
-        requirements: internship.requirements ? internship.requirements.join(", ") : "",
-        deadline: new Date(internship.deadline) || new Date(),
+        requirements: internship.requirements
+          ? internship.requirements.join(", ")
+          : "",
+        deadline: new Date(internship.deadline),
       });
       setDate(new Date(internship.deadline));
-      if (internship.image_url) {
-        setImagePreview(internship.image_url);
-      }
     }
   }, [internship]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleDateSelect = (selectedDate) => {
@@ -90,13 +75,13 @@ const InternshipModal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Convert requirements string to array
     const requirementsArray = formData.requirements
       .split(",")
       .map((req) => req.trim())
       .filter((req) => req !== "");
-    
+
     onSave({
       ...formData,
       requirements: requirementsArray,
@@ -105,197 +90,176 @@ const InternshipModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {internship ? "Edit Internship" : "Create New Internship"}
-          </DialogTitle>
-        </DialogHeader>
+      <div className="absolute top-0 left-0 bg-gray-900/20 h-screen w-screen z-99">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto z-999">
+          <DialogHeader>
+            <DialogTitle>
+              {internship ? "Edit Internship" : "Create New Internship"}
+            </DialogTitle>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          {/* Title */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="title">Title *</Label>
-            <Input
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="Frontend Developer Intern"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4 py-4">
+            {/* Title */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Frontend Developer Intern"
+                required
+              />
+            </div>
 
-          {/* Company */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="company">Company *</Label>
-            <Input
-              id="company"
-              name="company"
-              value={formData.company}
-              onChange={handleInputChange}
-              placeholder="TechStart Inc."
-              required
-            />
-          </div>
+            {/* Company */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="company">Company *</Label>
+              <Input
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleInputChange}
+                placeholder="TechStart Inc."
+                required
+              />
+            </div>
 
-          {/* Description */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Describe the internship opportunity..."
-              className="min-h-[120px]"
-              required
-            />
-          </div>
+            {/* Description */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe the internship opportunity..."
+                className="min-h-[120px]"
+                required
+              />
+            </div>
 
-          {/* Location */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="location">Location *</Label>
-            <Input
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              placeholder="New York, NY"
-              required
-            />
-          </div>
+            {/* Location */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="location">Location *</Label>
+              <Input
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="New York, NY"
+                required
+              />
+            </div>
 
-          {/* Type */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="type">Type *</Label>
-            <select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleInputChange}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              required
-            >
-              {internshipTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Type */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="type">Type *</Label>
+              <select
+                id="type"
+                name="type"
+                value={formData.type}
+                onChange={handleInputChange}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                required
+              >
+                {internshipTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Duration */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="duration">Duration *</Label>
-            <Input
-              id="duration"
-              name="duration"
-              value={formData.duration}
-              onChange={handleInputChange}
-              placeholder="3 months"
-              required
-            />
-          </div>
+            {/* Duration */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="duration">Duration *</Label>
+              <Input
+                id="duration"
+                name="duration"
+                value={formData.duration}
+                onChange={handleInputChange}
+                placeholder="3 months"
+                required
+              />
+            </div>
 
-          {/* Stipend */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="stipend">Stipend</Label>
-            <Input
-              id="stipend"
-              name="stipend"
-              value={formData.stipend}
-              onChange={handleInputChange}
-              placeholder="$1,000/month"
-            />
-          </div>
+            {/* Stipend */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="stipend">Stipend</Label>
+              <Input
+                id="stipend"
+                name="stipend"
+                value={formData.stipend}
+                onChange={handleInputChange}
+                placeholder="$1,000/month"
+              />
+            </div>
 
-          {/* Requirements */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="requirements">Requirements (comma-separated)</Label>
-            <Textarea
-              id="requirements"
-              name="requirements"
-              value={formData.requirements}
-              onChange={handleInputChange}
-              placeholder="React, JavaScript, HTML/CSS, Git"
-              className="min-h-[80px]"
-            />
-          </div>
+            {/* Requirements */}
+            <div className="grid w-full items-center gap-2">
+              <Label htmlFor="requirements">
+                Requirements (comma-separated)
+              </Label>
+              <Textarea
+                id="requirements"
+                name="requirements"
+                value={formData.requirements}
+                onChange={handleInputChange}
+                placeholder="React, JavaScript, HTML/CSS, Git"
+                className="min-h-[80px]"
+              />
+            </div>
 
-          {/* Deadline */}
-          <div className="grid w-full items-center gap-2">
-            <Label>Application Deadline *</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={handleDateSelect}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+            {/* Deadline */}
+            <div className="grid w-full items-center gap-2">
+              <Label>Application Deadline *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      `${
+                        date.getMonth() + 1
+                      }/${date.getDate()}/${date.getFullYear()}`
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateSelect}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
-          {/* Image Upload */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="image">Image</Label>
-            <Input
-              id="image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="cursor-pointer"
-            />
-            {imagePreview && (
-              <div className="relative w-full h-40 mt-2 rounded-md overflow-hidden">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImagePreview("");
-                    setFormData((prev) => ({ ...prev, image: null }));
-                  }}
-                  className="absolute top-2 right-2 bg-background/80 p-1 rounded-full"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter className="pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              className="mr-2"
-            >
-              Cancel
-            </Button>
-            <Button type="submit">
-              {internship ? "Update Internship" : "Create Internship"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
+            <DialogFooter className="pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                className="mr-2"
+              >
+                Cancel
+              </Button>
+              <Button type="submit">
+                {internship ? "Update Internship" : "Create Internship"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </div>
     </Dialog>
   );
 };

@@ -1,147 +1,108 @@
-import React, { useMemo, useState } from 'react';
-import { Building, Search, Filter, Users } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Users,
+  MapPin,
+  Globe,
+  Search,
+  Filter,
+  CheckCircle,
+  UserPlus,
+  Calendar,
+  Target,
+  Gift,
+  ClubIcon,
+} from "lucide-react";
+import { useLearnerClubs } from "@/hooks/learner/useLearnerClubs";
+import { Button } from "@/components/ui/button";
 
 const Clubs = () => {
-  // State for search input and category filter
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
-  // Mock data for clubs (replace with API data in production)
-  const mockClubs = [
-    {
-      id: '1',
-      name: 'Computer Science Society',
-      description: 'A community of students passionate about technology, programming, and innovation. We organize hackathons, tech talks, and coding competitions throughout the year.',
-      category: 'Technology',
-      members: 248,
-      benefits: ['Networking opportunities', 'Industry connections', 'Skill development', 'Leadership roles'],
-      imageUrl: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: false
-    },
-    {
-      id: '2',
-      name: 'Debate and Public Speaking Club',
-      description: 'Develop your communication and critical thinking skills through structured debates, public speaking workshops, and presentation training.',
-      category: 'Academic',
-      members: 89,
-      requirements: ['Interest in public speaking', 'Commitment to improvement', 'Respectful communication'],
-      benefits: ['Improved communication', 'Critical thinking', 'Confidence building', 'Competition opportunities'],
-      imageUrl: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: true
-    },
-    {
-      id: '3',
-      name: 'Environmental Action Group',
-      description: 'Dedicated to promoting sustainability and environmental awareness on campus and in the community through various green initiatives.',
-      category: 'Environment',
-      members: 156,
-      requirements: ['Passion for environment', 'Willingness to participate in activities', 'Collaborative mindset'],
-      benefits: ['Environmental impact', 'Community service', 'Leadership opportunities', 'Networking'],
-      imageUrl: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: false
-    },
-    {
-      id: '4',
-      name: 'International Students Association',
-      description: 'Supporting international students with cultural events, academic assistance, and social activities to foster a sense of community.',
-      category: 'Cultural',
-      members: 201,
-      requirements: ['Open to all students', 'Cultural appreciation', 'Inclusive mindset'],
-      benefits: ['Cultural exchange', 'Social connections', 'Academic support', 'Event planning experience'],
-      imageUrl: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: false
-    },
-    {
-      id: '5',
-      name: 'Photography Club',
-      description: 'Explore the art of photography through workshops, photo walks, exhibitions, and collaborative projects with fellow photography enthusiasts.',
-      category: 'Arts',
-      members: 67,
-      requirements: ['Interest in photography', 'Camera (smartphone OK)', 'Creative enthusiasm'],
-      benefits: ['Skill development', 'Portfolio building', 'Equipment access', 'Exhibition opportunities'],
-      imageUrl: 'https://images.pexels.com/photos/606541/pexels-photo-606541.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: false
-    },
-    {
-      id: '6',
-      name: 'Entrepreneurship Society',
-      description: 'For aspiring entrepreneurs and business-minded students. We host startup competitions, mentorship programs, and business plan workshops.',
-      category: 'Business',
-      members: 134,
-      requirements: ['Business interest', 'Innovative thinking', 'Collaborative spirit'],
-      benefits: ['Mentorship access', 'Funding opportunities', 'Network building', 'Business skills'],
-      imageUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=500',
-      isJoined: false
-    }
+  const { clubs, loading, error } = useLearnerClubs();
+
+  const categories = [
+    "All",
+    "Technology",
+    "Arts",
+    "Business",
+    "Sports",
+    "Science",
+    "Social",
   ];
 
-  // List of club categories for filtering
-  const categories = ['all', 'Technology', 'Academic', 'Environment', 'Cultural', 'Arts', 'Business', 'Sports', 'Music'];
-
-  // Local state to manage clubs (join/unjoin, counts)
-  const [clubs, setClubs] = useState(mockClubs);
-
-  // Filter clubs by search term and selected category
-  const filteredClubs = useMemo(() => clubs.filter(club => {
-    const matchesSearch = club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         club.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         club.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || club.category === categoryFilter;
+  const filteredClubs = clubs.filter((club) => {
+    const matchesSearch =
+      club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      club.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      categoryFilter === "all" || club.category === categoryFilter;
     return matchesSearch && matchesCategory;
-  }), [clubs, searchTerm, categoryFilter]);
+  });
 
-  // Toggle join/leave club and update members count
-  const onToggleJoin = (id) => {
-    setClubs(prev => prev.map(c => {
-      if (c.id !== id) return c;
-      const willJoin = !c.isJoined;
-      return {
-        ...c,
-        isJoined: willJoin,
-        members: Math.max(0, c.members + (willJoin ? 1 : -1))
-      };
-    }));
+  const handleClubAction = async (clubId) => {
+    console.log("Handle club action", clubId);
   };
 
-  // Returns emoji icon for each club category
-  const getCategoryIcon = (category) => {
-    const icons = {
-      'Technology': '💻',
-      'Academic': '📚',
-      'Environment': '🌱',
-      'Cultural': '🌍',
-      'Arts': '🎨',
-      'Business': '💼',
-      'Sports': '⚽',
-      'Music': '🎵'
-    };
-    return icons[category] || '📋';
-  };
+  // Category badge color using tokens
+  const getCategoryColor = () => "bg-accent text-accent-foreground";
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading clubs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
+        <div className="text-center py-12">
+          <Users className="w-16 h-16 text-destructive mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-foreground mb-2">
+            Error loading clubs
+          </h3>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-  <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8">
+    <div className="min-h-[80vh] w-full px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-8 bg-background">
       {/* Header section: Title and description */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Discover Clubs</h1>
-        <p className="text-muted-foreground">Find clubs and organizations that match your interests and connect with like-minded students</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          Discover Clubs
+        </h1>
+        <p className="text-muted-foreground">
+          Find exciting clubs happening near you or explore opportunities
+          further away
+        </p>
       </div>
 
-      {/* Search and Filters section */}
+      {/* Search and Category Filter section */}
       <div className="bg-card rounded-xl border border-border shadow-lg p-4 sm:p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Search input for club name, description, or category */}
+          {/* Search input for club name or description */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <input
               type="text"
-              placeholder="Search clubs by name, description, or category..."
+              placeholder="Search clubs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-input bg-muted text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-muted-foreground"
+              className="w-full pl-10 pr-4 py-3 border border-input bg-muted text-foreground placeholder:text-muted-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
-          {/* Category Filter dropdown */}
+          {/* Category dropdown for club type */}
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <select
@@ -149,9 +110,9 @@ const Clubs = () => {
               onChange={(e) => setCategoryFilter(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-input bg-muted text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category === 'all' ? 'All Categories' : `${getCategoryIcon(category)} ${category}`}
+                  {category === "all" ? "All Categories" : category}
                 </option>
               ))}
             </select>
@@ -161,80 +122,145 @@ const Clubs = () => {
 
       {/* Clubs Grid: Display filtered club cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {filteredClubs.map((club) => (
-          <div key={club.id} className="bg-card border border-border rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2">
-            {/* Club image and category/members overlays */}
-            <div className="relative h-40 sm:h-48">
-              <img 
-                src={club.imageUrl} 
-                alt={club.name}
-                className="w-full h-full object-cover"
-              />
-              {/* Category badge */}
-              <div className="absolute top-4 left-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium bg-accent text-accent-foreground border border-border`}>
-                  {getCategoryIcon(club.category)} {club.category}
-                </span>
-              </div>
-              {/* Members count badge */}
-              <div className="absolute top-4 right-4 bg-muted rounded-lg p-2 shadow-md border border-border">
-                <div className="flex items-center text-sm text-foreground">
-                  <Users className="w-4 h-4 mr-1" />
-                  {club.members}
-                </div>
-              </div>
-            </div>
-
-            {/* Club details and actions */}
-            <div className="p-4 sm:p-6">
-              {/* Club name and description */}
-              <h3 className="text-xl font-bold text-foreground mb-2">{club.name}</h3>
-              <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{club.description}</p>
-
-              {/* Key Benefits */}
-              <div className="mb-4">
-                <h4 className="text-sm font-semibold text-foreground mb-2">Key Benefits:</h4>
-                <div className="flex flex-wrap gap-1">
-                  {club.benefits?.slice(0, 2).map((benefit, index) => (
-                    <span key={index} className="bg-muted text-foreground px-2 py-1 rounded-full text-xs border border-border">
-                      {benefit}
-                    </span>
-                  ))}
-                  {club.benefits && club.benefits.length > 2 && (
-                    <span className="bg-muted text-foreground px-2 py-1 rounded-full text-xs border border-border">
-                      +{club.benefits.length - 2} more
-                    </span>
-                  )}
+        {/* Render each club card */}
+        {filteredClubs.map((club) => {
+          return (
+            <div
+              key={club.id}
+              className="bg-card border border-border rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-2"
+            >
+              {/* Club image and category badge */}
+              <div className="relative h-40 sm:h-48">
+                <img
+                  src={club.image_url || "/assets/placeholder.png"}
+                  alt={club.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-4 left-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(
+                      club.category
+                    )}`}
+                  >
+                    {club.category}
+                  </span>
                 </div>
               </div>
 
-              {/* Action buttons: Join and Learn More */}
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => onToggleJoin(club.id)}
-                  className={`flex-1 py-2 rounded-lg transition-colors border ${
-                    club.isJoined
-                      ? 'border-border text-foreground hover:bg-accent'
-                      : 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
-                  }`}
-                >
-                  {club.isJoined ? 'Joined' : 'Join Club'}
-                </button>
-                <button className="flex-1 border border-border text-foreground py-2 rounded-lg hover:bg-accent transition-colors">
-                  Learn More
-                </button>
+              {/* Club details and actions */}
+              <div className="p-4 sm:p-6">
+                {/* Club name and description */}
+                <h3 className="text-xl font-bold text-foreground mb-2">
+                  {club.name}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                  {club.description}
+                </p>
+
+                {/* Club info rows: location, members, creator */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    {club.location}
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Users className="w-4 h-4 mr-2" />
+                    {club.members || 0} members
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Globe className="w-4 h-4 mr-2" />
+                    by {club.creator || "Unknown"}
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {new Date(club.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+
+                {/* Requirements */}
+                {club.requirements && club.requirements.length > 0 && (
+                  <div className="mb-3">
+                    <div className="flex items-center gap-1 mb-2">
+                      <Target className="w-3 h-3 text-blue-600" />
+                      <span className="text-xs font-medium text-foreground">
+                        Requirements
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {club.requirements.slice(0, 2).map((req, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs border border-blue-200"
+                        >
+                          {req}
+                        </span>
+                      ))}
+                      {club.requirements.length > 2 && (
+                        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs border border-blue-200">
+                          +{club.requirements.length - 2} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Benefits */}
+                {club.benefits && club.benefits.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-1 mb-2">
+                      <Gift className="w-3 h-3 text-green-600" />
+                      <span className="text-xs font-medium text-foreground">
+                        Benefits
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {club.benefits.slice(0, 2).map((benefit, index) => (
+                        <span
+                          key={index}
+                          className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-xs border border-green-200"
+                        >
+                          {benefit}
+                        </span>
+                      ))}
+                      {club.benefits.length > 2 && (
+                        <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-xs border border-green-200">
+                          +{club.benefits.length - 2} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Creator and Join/Leave button */}
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-foreground/70">
+                    by {club.creator || "Unknown"}
+                  </div>
+                  <Button
+                    onClick={() => handleClubAction(club.id)}
+                    variant={"default"}
+                    className={`flex items-center gap-2ँ`}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Join Club
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* No clubs found message */}
       {filteredClubs.length === 0 && (
         <div className="text-center py-12">
-          <Building className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-foreground mb-2">No clubs found</h3>
-          <p className="text-muted-foreground">Try adjusting your search or filters to discover more clubs.</p>
+          <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-foreground mb-2">
+            No clubs found
+          </h3>
+          <p className="text-muted-foreground">
+            Try adjusting your search or filters to find more clubs.
+          </p>
         </div>
       )}
     </div>

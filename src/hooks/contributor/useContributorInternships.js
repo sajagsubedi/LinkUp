@@ -36,7 +36,7 @@ export const useContributorInternships = () => {
   // Fetch contributor's internships on mount
   useEffect(() => {
     fetchInternships();
-  }, [fetchInternships]);
+  }, []);
 
   // Add new internship
   const addInternship = async (internship) => {
@@ -57,9 +57,8 @@ export const useContributorInternships = () => {
         stipend,
         requirements,
         deadline,
-        image_url,
       } = internship;
-      
+
       const newInternship = {
         title,
         company,
@@ -70,9 +69,8 @@ export const useContributorInternships = () => {
         stipend,
         requirements,
         deadline,
-        image_url,
         applicants: 0,
-        posted_date: new Date().toISOString().split('T')[0],
+        posted_date: new Date().toISOString().split("T")[0],
       };
 
       const { data, error } = await supabase
@@ -177,12 +175,14 @@ export const useContributorInternships = () => {
       // Get applications with user information
       const { data, error } = await supabase
         .from("internship_applications")
-        .select(`
+        .select(
+          `
           id, 
           application_date, 
           status,
           user_id
-        `)
+        `
+        )
         .eq("internship_id", internshipId);
 
       if (error) throw error;
@@ -206,9 +206,11 @@ export const useContributorInternships = () => {
       // First verify this application is for an internship owned by the contributor
       const { data: appData, error: appError } = await supabase
         .from("internship_applications")
-        .select(`
+        .select(
+          `
           internship_id
-        `)
+        `
+        )
         .eq("id", applicationId)
         .single();
 
@@ -243,15 +245,15 @@ export const useContributorInternships = () => {
     }
   };
 
-  return { 
-    internships, 
-    loading, 
-    error, 
-    addInternship, 
-    updateInternship, 
+  return {
+    internships,
+    loading,
+    error,
+    refreshInternships: fetchInternships,
+    addInternship,
+    updateInternship,
     deleteInternship,
     getApplications,
     updateApplicationStatus,
-    refreshInternships: fetchInternships
   };
 };

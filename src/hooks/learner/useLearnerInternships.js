@@ -29,7 +29,7 @@ export const useLearnerInternships = () => {
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, []);
 
   // Apply for an internship
   const applyForInternship = async (internshipId) => {
@@ -59,7 +59,7 @@ export const useLearnerInternships = () => {
           internship_id: internshipId,
           user_id: user.id,
           application_date: new Date().toISOString(),
-          status: "pending"
+          status: "pending",
         });
 
       if (applicationError) throw applicationError;
@@ -143,11 +143,13 @@ export const useLearnerInternships = () => {
         .eq("user_id", user.id)
         .single();
 
-      return data ? { applied: true, status: data.status } : { applied: false, status: null };
+      return data
+        ? { applied: true, status: data.status }
+        : { applied: false, status: null };
     } catch {
       return { applied: false, status: null };
     }
-  }, [user, supabase]);
+  }, []);
 
   // Get all applications made by the current user
   const getUserApplications = useCallback(async () => {
@@ -156,12 +158,14 @@ export const useLearnerInternships = () => {
     try {
       const { data, error } = await supabase
         .from("internship_applications")
-        .select(`
+        .select(
+          `
           id,
           application_date,
           status,
           internships:internship_id(*)
-        `)
+        `
+        )
         .eq("user_id", user.id);
 
       if (error) throw error;
@@ -170,12 +174,12 @@ export const useLearnerInternships = () => {
       console.error("Error fetching user applications:", err);
       return [];
     }
-  }, [user, supabase]);
+  }, []);
 
   // Fetch internships on mount
   useEffect(() => {
     fetchInternships();
-  }, [fetchInternships]);
+  }, []);
 
   return {
     internships,

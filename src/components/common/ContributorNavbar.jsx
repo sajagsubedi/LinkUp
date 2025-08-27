@@ -3,19 +3,18 @@ import { Link, useLocation } from "react-router-dom";
 import { X, Menu } from "lucide-react";
 import { UserButton } from "@clerk/clerk-react";
 
-const NavLink = ({ route, children }) => {
+const NavLink = ({ href, children }) => {
   const location = useLocation();
   const pathname = location.pathname;
-
   return (
     <li className="flex justify-start px-8 md:px-3 text-lg my-1 border-primary">
       <Link
-        className={`hover:font-medium p-1 cursor-pointer box-border font-medium text-nowrap ${
-          !pathname.includes(route)
-            ? "text-muted-foreground hover:text-foreground"
-            : "text-primary font-semibold"
+        className={`p-1 cursor-pointer box-border font-medium text-nowrap transition-colors duration-200 ${
+          pathname === href
+            ? "text-primary font-bold border-b-2 border-primary"
+            : "text-muted-foreground hover:text-foreground"
         }`}
-        to={route}
+        to={href}
       >
         {children}
       </Link>
@@ -25,7 +24,6 @@ const NavLink = ({ route, children }) => {
 
 export default function ContrubutorNavbar({ navLinks }) {
   const [navActive, setNavActive] = useState(false);
-  const location = useLocation();
 
   return (
     <nav className="bg-background text-foreground flex items-center justify-between px-4 py-1 box-border gap-4 sticky top-0 h-16 z-[99] md:px-[5vw] w-full border-b border-border">
@@ -50,7 +48,7 @@ export default function ContrubutorNavbar({ navLinks }) {
             </button>
           </div>
           {navLinks.map((value, i) => (
-            <NavLink key={i} route={`/contributor/dashboard/${value.path}`}>
+            <NavLink key={i} href={`/contributor/dashboard/${value.path}`}>
               {value.name}
             </NavLink>
           ))}

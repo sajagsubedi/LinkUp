@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Calendar, MapPin, Users, Clock, Filter, Search, CheckCircle, UserPlus } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Filter,
+  Search,
+  CheckCircle,
+  UserPlus,
+} from "lucide-react";
 import { useLearnerEvents } from "@/hooks/learner/useLearnerEvents";
 import { Button } from "@/components/ui/button";
 
-// EventsPage.jsx - Learner view for discovering events
-// Now uses design tokens and light theme with real data from Supabase
 const Events = () => {
-  // State for search input
   const [searchTerm, setSearchTerm] = useState("");
-  // State for category filter
   const [categoryFilter, setCategoryFilter] = useState("all");
-  // State for user registrations
-  const [userRegistrations, setUserRegistrations] = useState(new Set());
 
   // Use the learner events hook
-  const { events, loading, error, joinEvent, leaveEvent, isUserRegistered } = useLearnerEvents();
+  const { events, loading, error } = useLearnerEvents();
 
   // Available event categories for filtering
   const categories = [
@@ -28,22 +31,6 @@ const Events = () => {
   ];
 
   // Check user registrations for all events
-  useEffect(() => {
-    const checkRegistrations = async () => {
-      if (events.length > 0) {
-        const registrations = new Set();
-        for (const event of events) {
-          const isRegistered = await isUserRegistered(event.id);
-          if (isRegistered) {
-            registrations.add(event.id);
-          }
-        }
-        setUserRegistrations(registrations);
-      }
-    };
-
-    checkRegistrations();
-  }, [events, isUserRegistered]);
 
   // Filter events based on search and selected category
   const filteredEvents = events.filter((event) => {
@@ -54,27 +41,6 @@ const Events = () => {
       categoryFilter === "all" || event.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
-
-  // Handle join/leave event
-  const handleEventAction = async (eventId) => {
-    const isRegistered = userRegistrations.has(eventId);
-    
-    if (isRegistered) {
-      const success = await leaveEvent(eventId);
-      if (success) {
-        setUserRegistrations(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(eventId);
-          return newSet;
-        });
-      }
-    } else {
-      const success = await joinEvent(eventId);
-      if (success) {
-        setUserRegistrations(prev => new Set([...prev, eventId]));
-      }
-    }
-  };
 
   // Category badge color using tokens
   const getCategoryColor = () => "bg-accent text-accent-foreground";
@@ -100,9 +66,7 @@ const Events = () => {
           <h3 className="text-xl font-medium text-foreground mb-2">
             Error loading events
           </h3>
-          <p className="text-muted-foreground">
-            {error}
-          </p>
+          <p className="text-muted-foreground">{error}</p>
         </div>
       </div>
     );
@@ -155,12 +119,9 @@ const Events = () => {
       </div>
 
       {/* Events Grid: Display filtered event cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Render each event card */}
         {filteredEvents.map((event) => {
-          const isRegistered = userRegistrations.has(event.id);
-          const isFull = event.attendees >= event.max_attendees;
-          
           return (
             <div
               key={event.id}
@@ -182,11 +143,10 @@ const Events = () => {
                     {event.category}
                   </span>
                 </div>
-                {isRegistered && (
-                  <div className="absolute top-4 right-4">
-                    <CheckCircle className="w-6 h-6 text-green-500 bg-white rounded-full" />
-                  </div>
-                )}
+
+                <div className="absolute top-4 right-4">
+                  <CheckCircle className="w-6 h-6 text-green-500 bg-white rounded-full" />
+                </div>
               </div>
 
               {/* Event details and actions */}
@@ -225,26 +185,13 @@ const Events = () => {
                     by {event.organizer || "Unknown"}
                   </div>
                   <Button
-                    onClick={() => handleEventAction(event.id)}
-                    disabled={isFull && !isRegistered}
-                    variant={isRegistered ? "outline" : "default"}
-                    className={`flex items-center gap-2 ${
-                      isRegistered 
-                        ? "border-green-500 text-green-600 hover:bg-green-50" 
-                        : ""
-                    }`}
+                    onClick={() => console.log(event.id)}
+                    disabled={false}
+                    variant={"default"}
+                    className={`flex items-center gap-2 `}
                   >
-                    {isRegistered ? (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        Joined
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus className="w-4 h-4" />
-                        {isFull ? "Full" : "Join"}
-                      </>
-                    )}
+                    <UserPlus className="w-4 h-4" />
+                    {"Join"}
                   </Button>
                 </div>
               </div>

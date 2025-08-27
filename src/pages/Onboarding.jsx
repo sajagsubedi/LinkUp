@@ -199,7 +199,7 @@ const Onboarding = () => {
                 className="group cursor-pointer transform transition-all duration-300 hover:scale-105"
                 onClick={() => handleRoleSelection("learner")}
               >
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 h-64 flex flex-col justify-between shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 border border-blue-200">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 p-8 h-auto flex flex-col justify-between shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 border border-blue-200">
                   <div className="absolute inset-0 bg-white/10 group-hover:bg-white/5 transition-colors" />
                   <div className="relative z-10">
                     <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-white/30 transition-colors">
@@ -225,7 +225,7 @@ const Onboarding = () => {
                 className="group cursor-pointer transform transition-all duration-300 hover:scale-105"
                 onClick={() => handleRoleSelection("contributor")}
               >
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 to-pink-600 p-8 h-64 flex flex-col justify-between shadow-xl hover:shadow-2xl hover:shadow-purple-500/25 border border-purple-200">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 to-pink-600 p-8 h-auto flex flex-col justify-between shadow-xl hover:shadow-2xl hover:shadow-purple-500/25 border border-purple-200">
                   <div className="absolute inset-0 bg-white/10 group-hover:bg-white/5 transition-colors" />
                   <div className="relative z-10">
                     <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:bg-white/30 transition-colors">

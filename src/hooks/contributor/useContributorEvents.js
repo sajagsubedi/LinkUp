@@ -95,9 +95,28 @@ export const useContributorEvents = () => {
     }
 
     try {
+      const {
+        title,
+        description,
+        date,
+        time,
+        location,
+        category,
+        organizer,
+        image_url,
+      } = updates;
       const { data, error } = await supabase
         .from("events")
-        .update({ ...updates })
+        .update({
+          title,
+          description,
+          date,
+          time,
+          location,
+          category,
+          organizer,
+          image_url,
+        })
         .eq("id", eventId)
         .eq("contributor_id", user.id)
         .select();

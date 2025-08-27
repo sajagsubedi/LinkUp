@@ -58,13 +58,13 @@
   "main": "eslint.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lamichhaneriwaj/Job-portal.git"
+    "url": "git+https://github.com/sajagsubedi/LinkUp.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lamichhaneriwaj/Job-portal/issues"
+    "url": "https://github.com/sajagsubedi/LinkUp/issues"
   },
-  "homepage": "https://github.com/lamichhaneriwaj/Job-portal#readme"
+  "homepage": "https://github.com/sajagsubedi/LinkUp#readme"
 }

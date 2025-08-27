@@ -65,7 +65,7 @@ const ContributorInternshipPage = () => {
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), "MMM d, yyyy");
-    } catch (error) {
+    } catch {
       return dateString;
     }
   };
@@ -167,7 +167,10 @@ const ContributorInternshipPage = () => {
 
       {/* Internships */}
       {loading ? (
-        <div className="text-center py-12">Loading internships...</div>
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading internships...</p>
+        </div>
       ) : filteredInternships.length === 0 ? (
         <div className="text-center py-12">
           <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -185,7 +188,7 @@ const ContributorInternshipPage = () => {
             return (
               <Card
                 key={internship.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                className="bg-card border border-border overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 {internship.image_url ? (
                   <div className="h-48 overflow-hidden">
