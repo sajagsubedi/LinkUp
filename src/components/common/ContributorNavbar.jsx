@@ -11,7 +11,7 @@ const NavLink = ({ route, children }) => {
     <li className="flex justify-start px-8 md:px-3 text-lg my-1 border-primary">
       <Link
         className={`hover:font-medium p-1 cursor-pointer box-border font-medium text-nowrap ${
-          pathname !== route
+          !pathname.includes(route)
             ? "text-muted-foreground hover:text-foreground"
             : "text-primary font-semibold"
         }`}
@@ -25,6 +25,7 @@ const NavLink = ({ route, children }) => {
 
 export default function ContrubutorNavbar({ navLinks }) {
   const [navActive, setNavActive] = useState(false);
+  const location = useLocation();
 
   return (
     <nav className="bg-background text-foreground flex items-center justify-between px-4 py-1 box-border gap-4 sticky top-0 h-16 z-[99] md:px-[5vw] w-full border-b border-border">
@@ -49,7 +50,7 @@ export default function ContrubutorNavbar({ navLinks }) {
             </button>
           </div>
           {navLinks.map((value, i) => (
-            <NavLink key={i} route={value.path}>
+            <NavLink key={i} route={`/contributor/dashboard/${value.path}`}>
               {value.name}
             </NavLink>
           ))}

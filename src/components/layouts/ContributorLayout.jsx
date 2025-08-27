@@ -58,7 +58,7 @@ const ContributorLayout = () => {
     return <Navigate to="/dashboard" />;
   }
 
-  const path = pathname.split("/contributor/dashboard/")[1];
+  const path = pathname.split("/contributor/dashboard/")[1] || "";
 
   const filteredNavLinks = navLinks
     .map((value) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Briefcase,
   Search,
@@ -8,146 +8,47 @@ import {
   Calendar,
   Building,
   Users,
+  AlertCircle,
 } from "lucide-react";
+import { useLearnerInternships } from "@/hooks/learner/useLearnerInternships";
+
+import { useToast } from "@/components/ui/use-toast";
 
 // InternshipPage.jsx - Learner view for discovering internships
-// Uses token-based light theme and modern card layout
 const Internships = () => {
   // State for search input and filters
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
+  const { toast } = useToast();
 
-  // Mock data for internships (replace with API data in production)
-  const mockInternships = [
-    {
-      id: "1",
-      title: "Frontend Developer Intern",
-      company: "TechStart Inc.",
-      location: "New York, NY",
-      type: "remote",
-      duration: "3 months",
-      stipend: "$1,200/month",
-      description:
-        "Join our dynamic team to work on cutting-edge web applications using React, TypeScript, and modern frontend technologies. You'll collaborate with senior developers and gain hands-on experience in agile development.",
-      requirements: [
-        "React",
-        "JavaScript",
-        "HTML/CSS",
-        "Git",
-        "Problem-solving skills",
-      ],
-      postedDate: "2024-01-10",
-      deadline: "2024-02-15",
-      applicants: 45,
-    },
-    {
-      id: "2",
-      title: "Marketing Assistant Intern",
-      company: "Creative Agency Pro",
-      location: "San Francisco, CA",
-      type: "hybrid",
-      duration: "4 months",
-      stipend: "$800/month",
-      description:
-        "Support our marketing team in developing and executing digital marketing campaigns. Learn about social media strategy, content creation, and market research while working on real client projects.",
-      requirements: [
-        "Communication skills",
-        "Social media knowledge",
-        "Creative thinking",
-        "Adobe Creative Suite",
-        "Basic analytics",
-      ],
-      postedDate: "2024-01-08",
-      deadline: "2024-02-20",
-      applicants: 67,
-    },
-    {
-      id: "3",
-      title: "Data Science Intern",
-      company: "Analytics Solutions",
-      location: "Seattle, WA",
-      type: "onsite",
-      duration: "6 months",
-      stipend: "$1,800/month",
-      description:
-        "Work with our data science team to analyze large datasets, build predictive models, and create data visualizations. Perfect opportunity to apply machine learning concepts in a business environment.",
-      requirements: [
-        "Python",
-        "SQL",
-        "Statistics",
-        "Machine Learning",
-        "Data Visualization",
-        "Pandas/NumPy",
-      ],
-      postedDate: "2024-01-05",
-      deadline: "2024-02-10",
-      applicants: 89,
-    },
-    {
-      id: "4",
-      title: "UX/UI Design Intern",
-      company: "Design Studio Co.",
-      location: "Los Angeles, CA",
-      type: "hybrid",
-      duration: "3 months",
-      stipend: "$1,000/month",
-      description:
-        "Assist in designing user interfaces and experiences for mobile and web applications. Learn design thinking methodologies, create wireframes, and participate in user research activities.",
-      requirements: [
-        "Figma",
-        "Design principles",
-        "User research",
-        "Prototyping",
-        "Creative portfolio",
-      ],
-      postedDate: "2024-01-12",
-      deadline: "2024-02-25",
-      applicants: 34,
-    },
-    {
-      id: "5",
-      title: "Business Development Intern",
-      company: "Growth Ventures",
-      location: "Chicago, IL",
-      type: "onsite",
-      duration: "4 months",
-      stipend: "$1,100/month",
-      description:
-        "Support business development activities including market research, lead generation, and partnership development. Gain exposure to startup ecosystem and learn about scaling business operations.",
-      requirements: [
-        "Business acumen",
-        "Research skills",
-        "Excel proficiency",
-        "Communication",
-        "Analytical thinking",
-      ],
-      postedDate: "2024-01-07",
-      deadline: "2024-02-18",
-      applicants: 52,
-    },
-    {
-      id: "6",
-      title: "Content Writing Intern",
-      company: "Media Hub",
-      location: "Austin, TX",
-      type: "remote",
-      duration: "3 months",
-      stipend: "$600/month",
-      description:
-        "Create engaging content for various digital platforms including blogs, social media, and newsletters. Learn about SEO, content strategy, and brand voice while building a diverse writing portfolio.",
-      requirements: [
-        "Excellent writing",
-        "SEO knowledge",
-        "Content strategy",
-        "Social media",
-        "Creativity",
-      ],
-      postedDate: "2024-01-09",
-      deadline: "2024-02-22",
-      applicants: 78,
-    },
-  ];
+  // Use the custom hook to fetch internships and handle applications
+  const {
+    internships,
+    loading,
+    error,
+    applyForInternship,
+    hasApplied,
+    getUserApplications,
+  } = useLearnerInternships();
+
+  // State to track which internships the user has applied to
+  const [userApplications, setUserApplications] = useState([]);
+  const [applicationLoading, setApplicationLoading] = useState({});
+
+  // Fetch user's applications on component mount
+  useEffect(() => {
+    const fetchUserApplications = async () => {
+      try {
+        const applications = await getUserApplications();
+        setUserApplications(applications.map(app => app.internship_id));
+      } catch (error) {
+        console.error("Error fetching user applications:", error);
+      }
+    };
+
+    fetchUserApplications();
+  }, [getUserApplications]);
 
   // Type filter options for dropdown
   const typeOptions = [
@@ -157,19 +58,18 @@ const Internships = () => {
     { value: "hybrid", label: "Hybrid" },
   ];
 
-  // Location filter options for dropdown
+  // Get unique locations from internships for the location filter
+  const uniqueLocations = [...new Set(internships.map(item => item.location))];
   const locationOptions = [
     { value: "all", label: "All Locations" },
-    { value: "New York, NY", label: "New York, NY" },
-    { value: "San Francisco, CA", label: "San Francisco, CA" },
-    { value: "Seattle, WA", label: "Seattle, WA" },
-    { value: "Los Angeles, CA", label: "Los Angeles, CA" },
-    { value: "Chicago, IL", label: "Chicago, IL" },
-    { value: "Austin, TX", label: "Austin, TX" },
+    ...uniqueLocations.map(location => ({
+      value: location,
+      label: location,
+    })),
   ];
 
   // Filter internships by search term, type, and location
-  const filteredInternships = mockInternships.filter((internship) => {
+  const filteredInternships = internships.filter((internship) => {
     const matchesSearch =
       internship.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       internship.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -183,7 +83,18 @@ const Internships = () => {
   });
 
   // Token-based badge colors
-  const getTypeColor = () => "bg-accent text-accent-foreground";
+  const getTypeColor = (type) => {
+    switch (type) {
+      case "remote":
+        return "bg-blue-100 text-blue-800";
+      case "onsite":
+        return "bg-green-100 text-green-800";
+      case "hybrid":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   // Returns emoji icon for each internship type
   const getTypeIcon = (type) => {
@@ -201,11 +112,13 @@ const Internships = () => {
 
   // Formats a date string to a readable format
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    if (!dateString) return '';
+    try {
+      const d = new Date(dateString);
+      return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+    } catch (error) {
+      return dateString;
+    }
   };
 
   // Calculates days remaining until internship application deadline
@@ -215,6 +128,32 @@ const Internships = () => {
     const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  // Handle apply button click
+  const handleApply = async (internshipId) => {
+    setApplicationLoading(prev => ({ ...prev, [internshipId]: true }));
+    try {
+      await applyForInternship(internshipId);
+      setUserApplications(prev => [...prev, internshipId]);
+      toast({
+        title: "Application Submitted",
+        description: "Your application has been successfully submitted.",
+      });
+    } catch (error) {
+      toast({
+        title: "Application Failed",
+        description: error.message || "Failed to submit application. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setApplicationLoading(prev => ({ ...prev, [internshipId]: false }));
+    }
+  };
+
+  // Check if user has applied to a specific internship
+  const hasUserApplied = (internshipId) => {
+    return userApplications.includes(internshipId);
   };
 
   return (
@@ -279,117 +218,160 @@ const Internships = () => {
         </div>
       </div>
 
+      {/* Error message */}
+      {error && (
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-6 flex items-center">
+          <AlertCircle className="w-5 h-5 mr-2" />
+          <span>Failed to load internships. Please try again later.</span>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="animate-spin w-10 h-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading internships...</p>
+        </div>
+      )}
+
       {/* Internships List: Display filtered internship cards */}
-      <div className="space-y-4 sm:space-y-6">
-        {/* Render each internship card */}
-        {filteredInternships.map((internship) => {
-          const daysRemaining = getDaysRemaining(internship.deadline);
-          return (
-            <div
-              key={internship.id}
-              className="bg-card border border-border rounded-xl shadow p-4 sm:p-6 hover:shadow-lg transition"
-            >
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
-                <div className="flex-1">
-                  {/* Internship card header: title, company, location, type, deadline */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-foreground mb-2">
-                        {internship.title}
-                      </h3>
-                      <div className="flex items-center space-x-4 mb-3">
-                        <div className="flex items-center text-muted-foreground">
-                          <Building className="w-4 h-4 mr-1" />
-                          {internship.company}
+      {!loading && !error && (
+        <div className="space-y-4 sm:space-y-6">
+          {/* Render each internship card */}
+          {filteredInternships.map((internship) => {
+            const daysRemaining = getDaysRemaining(internship.deadline);
+            const isApplied = hasUserApplied(internship.id);
+            const isLoading = applicationLoading[internship.id];
+            const isExpired = daysRemaining <= 0;
+            
+            return (
+              <div
+                key={internship.id}
+                className="bg-card border border-border rounded-xl shadow p-4 sm:p-6 hover:shadow-lg transition"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex-1">
+                    {/* Internship card header: title, company, location, type, deadline */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground mb-2">
+                          {internship.title}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-4 mb-3">
+                          <div className="flex items-center text-muted-foreground">
+                            <Building className="w-4 h-4 mr-1" />
+                            {internship.company}
+                          </div>
+                          <div className="flex items-center text-muted-foreground">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {internship.location}
+                          </div>
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
+                              internship.type
+                            )}`}
+                          >
+                            {getTypeIcon(internship.type)} {internship.type}
+                          </span>
                         </div>
-                        <div className="flex items-center text-muted-foreground">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {internship.location}
-                        </div>
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
-                            internship.type
-                          )}`}
-                        >
-                          {getTypeIcon(internship.type)} {internship.type}
-                        </span>
                       </div>
+                      {daysRemaining > 0 ? (
+                        <div className="text-right">
+                          <div className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">
+                            {daysRemaining} days left
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-destructive/10 text-destructive px-3 py-1 rounded-full text-sm font-medium">
+                          Expired
+                        </div>
+                      )}
                     </div>
-                    {daysRemaining > 0 ? (
-                      <div className="text-right">
-                        <div className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">
-                          {daysRemaining} days left
+
+                    {/* Internship description */}
+                    <p className="text-muted-foreground mb-4">
+                      {internship.description}
+                    </p>
+
+                    {/* Requirements list */}
+                    {internship.requirements && internship.requirements.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-semibold text-foreground mb-2">
+                          Requirements:
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {internship.requirements.map((req, index) => (
+                            <span
+                              key={index}
+                              className="bg-muted text-foreground px-2 py-1 rounded-full text-sm border border-border"
+                            >
+                              {req}
+                            </span>
+                          ))}
                         </div>
-                      </div>
-                    ) : (
-                      <div className="bg-destructive/10 text-destructive px-3 py-1 rounded-full text-sm font-medium">
-                        Expired
                       </div>
                     )}
-                  </div>
 
-                  {/* Internship description */}
-                  <p className="text-muted-foreground mb-4">
-                    {internship.description}
-                  </p>
-
-                  {/* Requirements list */}
-                  <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-foreground mb-2">
-                      Requirements:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {internship.requirements.map((req, index) => (
-                        <span
-                          key={index}
-                          className="bg-muted text-foreground px-2 py-1 rounded-full text-sm border border-border"
-                        >
-                          {req}
-                        </span>
-                      ))}
+                    {/* Details Grid: duration, posted date, applicants */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 text-sm">
+                      <div className="flex items-center text-muted-foreground">
+                        <Clock className="w-4 h-4 mr-1" />
+                        <span>{internship.duration}</span>
+                      </div>
+                      {internship.stipend && (
+                        <div className="flex items-center text-muted-foreground">
+                          <DollarSign className="w-4 h-4 mr-1" />
+                          <span>{internship.stipend}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center text-muted-foreground">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span>Posted {formatDate(internship.created_at)}</span>
+                      </div>
+                      <div className="flex items-center text-muted-foreground">
+                        <Users className="w-4 h-4 mr-1" />
+                        <span>{internship.applicants || 0} applicants</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Details Grid: duration, posted date, applicants */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 text-sm">
-                    <div className="flex items-center text-muted-foreground">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>{internship.duration}</span>
+                  {/* Action buttons: Apply Now or Application Closed */}
+                  <div className="lg:ml-6 lg:w-48">
+                    <div className="space-y-2">
+                      <button
+                        className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${isApplied
+                          ? "bg-accent text-accent-foreground cursor-not-allowed"
+                          : isExpired
+                            ? "bg-muted text-muted-foreground cursor-not-allowed"
+                            : "bg-primary text-primary-foreground hover:bg-primary/90"
+                        }`}
+                        disabled={isApplied || isExpired || isLoading}
+                        onClick={() => !isApplied && !isExpired && handleApply(internship.id)}
+                      >
+                        {isLoading ? (
+                          <span className="flex items-center justify-center">
+                            <span className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-2"></span>
+                            Applying...
+                          </span>
+                        ) : isApplied ? (
+                          "Applied"
+                        ) : isExpired ? (
+                          "Application Closed"
+                        ) : (
+                          "Apply Now"
+                        )}
+                      </button>
                     </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span>Posted {formatDate(internship.postedDate)}</span>
-                    </div>
-                    <div className="flex items-center text-muted-foreground">
-                      <Users className="w-4 h-4 mr-1" />
-                      <span>{internship.applicants} applicants</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action buttons: Apply Now or Application Closed */}
-                <div className="lg:ml-6 lg:w-48">
-                  <div className="space-y-2">
-                    <button
-                      className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
-                        daysRemaining > 0
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                          : "bg-muted text-muted-foreground cursor-not-allowed"
-                      }`}
-                      disabled={daysRemaining <= 0}
-                    >
-                      {daysRemaining > 0 ? "Apply Now" : "Application Closed"}
-                    </button>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* No internships found message */}
-      {filteredInternships.length === 0 && (
+      {!loading && !error && filteredInternships.length === 0 && (
         <div className="text-center py-12">
           <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-xl font-medium text-foreground mb-2">
