@@ -1,5 +1,5 @@
 import LandingPage from "./LandingPage";
-import Onboarding from "./onboarding";
+import Onboarding from "./Onboarding";
 import DashboardRedirection from "./DashboardRedirection";
 
 import ContributorClubsPage from "./contributor/ContributorClubsPage";
